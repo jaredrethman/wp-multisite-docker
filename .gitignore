@@ -3,3 +3,4 @@ mysql
 config/nginx/certs/*.pem
 html/*
 !html/wp-content
+html/wp-content/uploads
