@@ -24,7 +24,7 @@ services:
       - wordpress
 
   mariadb:
-    image: mariadb:10.5
+    image: mariadb:${MYSQL_VERSION:-10.5}
     container_name: mariadb
     volumes:
       - ${MYSQL_DIR:-./mysql}:/var/lib/mysql
