@@ -1,6 +1,12 @@
 mysql
 .env
 config/nginx/certs/*.pem
+
+# 
 html/*
 !html/wp-content
 html/wp-content/uploads
+
+# Environment files
+*.env
+!.env.example
