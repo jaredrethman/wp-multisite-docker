@@ -1,4 +1,5 @@
+mysql
 .env
-core/*
-config/nginx/default.conf
-wordpress/*
+config/nginx/certs/*.pem
+html/*
+!html/wp-content
