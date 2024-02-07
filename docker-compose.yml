@@ -4,22 +4,6 @@ networks:
   wordpress:
 
 services:
-  nginx:
-    build:
-      context: ./config/nginx
-    container_name: nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - "./html:/var/www/html:delegated"
-    depends_on:
-      - mariadb
-      - php
-    networks:
-      - wordpress
-    profiles:
-      - shared
 
   mariadb:
     image: mariadb:${MYSQL_VERSION:-10.5}
@@ -34,33 +18,6 @@ services:
       - MYSQL_ALLOWED_EMPTY_PASSWORD=${MYSQL_ALLOWED_EMPTY_PASSWORD:-no}
       - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:-password123!}
     restart: always
-    networks:
-      - wordpress
-    profiles:
-      - shared
-
-  php:
-    env_file:
-      - ./env/d-hub.local.env
-    build:
-      context: ./config/php
-    container_name: "php"
-    depends_on:
-      - mariadb
-    volumes:
-      - "./www/${DOMAIN_NAME}:/var/www/html:delegated"  # Adjusted to match your desired path structure
-    networks:
-      - wordpress
-    profiles:
-      - shared
-
-  wp:
-    build:
-      context: ./config/php
-    container_name: "wp"  # Added dynamic naming to avoid conflicts
-    entrypoint: ['wp', '--allow-root']
-    volumes:
-      - "./www/${DOMAIN_NAME}:/var/www/html:delegated"  # Adjusted to match your desired path structure
     networks:
       - wordpress
     profiles:
