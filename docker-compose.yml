@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.7'  # Updated for profile support
 
 networks:
   wordpress:
@@ -7,27 +7,25 @@ services:
   nginx:
     build:
       context: ./config/nginx
-      args:
-      - DOMAIN_NAME=${DOMAIN_NAME}
-    env_file:
-      - .env
     container_name: nginx
     ports:
-      - 80:80
-      - 443:443
+      - "80:80"
+      - "443:443"
     volumes:
-      - ./html:/var/www/html:delegated
+      - "./html:/var/www/html:delegated"
     depends_on:
-      - php
       - mariadb
+      - php
     networks:
       - wordpress
+    profiles:
+      - shared
 
   mariadb:
     image: mariadb:${MYSQL_VERSION:-10.5}
     container_name: mariadb
     volumes:
-      - ${MYSQL_DIR:-./mysql}:/var/lib/mysql
+      - "${MYSQL_DIR:-./mysql}:/var/lib/mysql"
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-password123!}
       - MYSQL_DATABASE=${WP_DB_NAME:-wordpress}
@@ -38,27 +36,35 @@ services:
     restart: always
     networks:
       - wordpress
- 
+    profiles:
+      - shared
+
   php:
+    env_file:
+      - ./env/d-hub.local.env
     build:
       context: ./config/php
-    container_name: php
+    container_name: "php"
     depends_on:
       - mariadb
     volumes:
-      - ./html:/var/www/html:delegated
+      - "./www/${DOMAIN_NAME}:/var/www/html:delegated"  # Adjusted to match your desired path structure
     networks:
       - wordpress
+    profiles:
+      - shared
 
   wp:
     build:
       context: ./config/php
-    container_name: wp
+    container_name: "wp"  # Added dynamic naming to avoid conflicts
     entrypoint: ['wp', '--allow-root']
     volumes:
-      - ./html:/var/www/html:delegated
+      - "./www/${DOMAIN_NAME}:/var/www/html:delegated"  # Adjusted to match your desired path structure
     networks:
       - wordpress
+    profiles:
+      - shared
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -74,3 +80,5 @@ services:
       - mariadb
     networks:
       - wordpress
+    profiles:
+      - shared

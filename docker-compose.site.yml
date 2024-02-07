@@ -1,0 +1,29 @@
+version: '3.7'  # Updated for profile support
+
+networks:
+  wordpress:
+
+services:
+
+  php:
+    build:
+      context: ./config/php
+    container_name: "${DOMAIN_NAME}_php"
+    volumes:
+      - "./www/${DOMAIN_NAME}:/var/www/html:delegated"  # Adjusted to match your desired path structure
+    networks:
+      - wordpress
+    profiles:
+      - "${DOMAIN_NAME}"
+
+  wp:
+    build:
+      context: ./config/php
+    container_name: "${DOMAIN_NAME}_wp"  # Added dynamic naming to avoid conflicts
+    entrypoint: ['wp', '--allow-root']
+    volumes:
+      - "./www/${DOMAIN_NAME}:/var/www/html:delegated"  # Adjusted to match your desired path structure
+    networks:
+      - wordpress
+    profiles:
+      - "${DOMAIN_NAME}"

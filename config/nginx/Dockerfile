@@ -1,11 +1,11 @@
 FROM nginx:stable-alpine
 
-ARG DOMAIN_NAME
+# ARG DOMAIN_NAME
 
 ADD ./default.conf /etc/nginx/conf.d/default.conf
-RUN sed -i -r "s/localhost/${DOMAIN_NAME}/g" /etc/nginx/conf.d/default.conf
+ADD ./nginx.conf /etc/nginx/nginx.conf
+ADD ./sites-available/ /etc/nginx/sites-available/
 
-ADD ./certs/${DOMAIN_NAME}.pem /etc/nginx/certs/${DOMAIN_NAME}.pem
-ADD ./certs/${DOMAIN_NAME}-key.pem /etc/nginx/certs/${DOMAIN_NAME}-key.pem
+ADD ./certs/*.pem /etc/nginx/certs/
 
 RUN mkdir -p /var/www/html
