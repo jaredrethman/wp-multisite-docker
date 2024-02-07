@@ -1,10 +1,14 @@
 mysql
+nginx
 config/nginx/certs/*.pem
 
-# 
-html/*
-!html/wp-content
-html/wp-content/uploads
+# wp-content
+www/*.*/*
+!www/*.*/wp-content
+www/wp-content/uploads
+www/*.*.*/*
+!www/*.*.*/wp-content
+www/wp-content/uploads
 
 # Environment files
 env/*.env
