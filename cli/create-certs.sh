@@ -15,9 +15,18 @@ CORE_DIR="${WP_PATH}/core"
 CERTS_DIR="${WP_PATH}/config/nginx/certs"
 DOMAIN_NAME="${DOMAIN_NAME:-localhost}"
 
-# Does mkcert exist, prompt user
+# UNTESTED
 if command -v mkcert &> /dev/null; then
-    echo "mkcert detected. Please install using 'mkcert -key-file \"${CERTS_DIR}/${DOMAIN_NAME}-key.pem\" -cert-file \"${CERTS_DIR}/${DOMAIN_NAME}.pem\" \"$DOMAIN_NAME\" \"*.$DOMAIN_NAME\""
+    echo "mkcert detected. Installing CA, if doesn't exist"
+    mkcert -install
+
+    if [ ! -d "${CERTS_DIR}" ]; then
+        mkdir -p "${CERTS_DIR}"
+    fi
+
+    echo "Generating SSL certificates for \"${DOMAIN_NAME}\" using mkcert."
+    mkcert -key-file "${CERTS_DIR}/${DOMAIN_NAME}-key.pem" -cert-file "${CERTS_DIR}/${DOMAIN_NAME}.pem" "${DOMAIN_NAME}" "*.${DOMAIN_NAME}"
+    echo "Certificates generated and trusted."
     exit 0
 fi
 
